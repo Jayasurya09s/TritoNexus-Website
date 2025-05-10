@@ -1,10 +1,10 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import Footer from "./Footer";
-import { Home, LayoutDashboard, Calendar, LogOut } from "lucide-react";
+import { Home, LayoutDashboard, Calendar, LogOut, Settings } from "lucide-react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,6 +12,9 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) => {
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-muted/30">
       {/* Sticky Header/Navbar */}
@@ -28,24 +31,47 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
             <nav className="hidden md:flex items-center space-x-1">
               <Link 
                 to="/dashboard" 
-                className="px-3 py-2 rounded-md hover:bg-muted transition-colors flex items-center space-x-1"
+                className={`px-3 py-2 rounded-md transition-colors flex items-center space-x-1 ${
+                  isActive('/dashboard') 
+                    ? 'bg-gradient-to-r from-tritonexus-purple/20 to-tritonexus-pink/20 text-foreground' 
+                    : 'hover:bg-muted transition-colors text-foreground/80'
+                }`}
               >
                 <LayoutDashboard className="h-4 w-4" />
                 <span>Dashboard</span>
               </Link>
               <Link 
                 to="/workflow" 
-                className="px-3 py-2 rounded-md hover:bg-muted transition-colors flex items-center space-x-1"
+                className={`px-3 py-2 rounded-md transition-colors flex items-center space-x-1 ${
+                  isActive('/workflow') 
+                    ? 'bg-gradient-to-r from-tritonexus-purple/20 to-tritonexus-pink/20 text-foreground' 
+                    : 'hover:bg-muted transition-colors text-foreground/80'
+                }`}
               >
                 <Home className="h-4 w-4" />
                 <span>Workflow</span>
               </Link>
               <Link 
                 to="/gantt-chart" 
-                className="px-3 py-2 rounded-md hover:bg-muted transition-colors flex items-center space-x-1"
+                className={`px-3 py-2 rounded-md transition-colors flex items-center space-x-1 ${
+                  isActive('/gantt-chart') 
+                    ? 'bg-gradient-to-r from-tritonexus-purple/20 to-tritonexus-pink/20 text-foreground' 
+                    : 'hover:bg-muted transition-colors text-foreground/80'
+                }`}
               >
                 <Calendar className="h-4 w-4" />
                 <span>Gantt Chart</span>
+              </Link>
+              <Link 
+                to="/admin" 
+                className={`px-3 py-2 rounded-md transition-colors flex items-center space-x-1 ${
+                  isActive('/admin') 
+                    ? 'bg-gradient-to-r from-tritonexus-purple/20 to-tritonexus-pink/20 text-foreground' 
+                    : 'hover:bg-muted transition-colors text-foreground/80'
+                }`}
+              >
+                <Settings className="h-4 w-4" />
+                <span>Admin</span>
               </Link>
             </nav>
             <ThemeToggle />
