@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
@@ -36,7 +35,9 @@ const Navbar = () => {
       }`}
     >
       <div className="container-custom flex items-center justify-between">
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
@@ -64,7 +65,7 @@ const Navbar = () => {
         </nav>
         
         {/* Mobile Menu Button */}
-        <div className="flex items-center space-x-3 md:hidden">
+        <div className="md:hidden flex items-center space-x-2">
           <ThemeToggle />
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
