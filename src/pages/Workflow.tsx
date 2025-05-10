@@ -1,8 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import Logo from '../components/Logo';
-import ThemeToggle from '../components/ThemeToggle';
+import DashboardLayout from '../components/DashboardLayout';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 
@@ -153,90 +151,70 @@ const MemberCard = ({ member }: { member: typeof teamMembers[0] }) => {
 
 const Workflow = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 pb-16">
-      <header className="bg-background/80 backdrop-blur-md shadow-sm px-6 py-4 fixed top-0 left-0 right-0 z-50">
-        <div className="container-custom flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <Logo />
-          </Link>
+    <DashboardLayout title="Team Workflow">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-8">
+          <p className="text-muted-foreground">
+            Track your team's progress and task assignments in real-time
+          </p>
+        </div>
+        
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5">
+            <CardContent className="flex items-center justify-between p-6">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Tasks</p>
+                <p className="text-3xl font-bold text-foreground mt-1">24</p>
+              </div>
+              <div className="h-12 w-12 bg-tritonexus-purple/10 rounded-full flex items-center justify-center">
+                <span className="text-xl text-tritonexus-purple font-bold">T</span>
+              </div>
+            </CardContent>
+          </Card>
           
-          <div className="flex items-center space-x-4">
-            <div className="bg-muted/50 rounded-full px-4 py-1.5">
-              <span className="text-sm font-medium">Team Dashboard</span>
-            </div>
-            <ThemeToggle />
+          <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5">
+            <CardContent className="flex items-center justify-between p-6">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Completed</p>
+                <p className="text-3xl font-bold text-foreground mt-1">14</p>
+              </div>
+              <div className="h-12 w-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                <span className="text-xl text-green-500 font-bold">C</span>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5">
+            <CardContent className="flex items-center justify-between p-6">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Team Members</p>
+                <p className="text-3xl font-bold text-foreground mt-1">4</p>
+              </div>
+              <div className="h-12 w-12 bg-tritonexus-pink/10 rounded-full flex items-center justify-center">
+                <span className="text-xl text-tritonexus-pink font-bold">M</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Team Members Grid */}
+        <div>
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+            <span className="bg-tritonexus-purple/20 text-tritonexus-purple w-8 h-8 rounded-full inline-flex items-center justify-center mr-2">
+              <span className="text-sm">T</span>
+            </span>
+            Team Overview
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+            {teamMembers.map(member => (
+              <MemberCard key={member.id} member={member} />
+            ))}
           </div>
         </div>
-      </header>
-      
-      <main className="container-custom pt-28 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">
-              Team <span className="text-gradient">Workflow</span>
-            </h1>
-            <p className="text-muted-foreground">
-              Track your team's progress and task assignments in real-time
-            </p>
-          </div>
-          
-          {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Tasks</p>
-                  <p className="text-3xl font-bold text-foreground mt-1">24</p>
-                </div>
-                <div className="h-12 w-12 bg-tritonexus-purple/10 rounded-full flex items-center justify-center">
-                  <span className="text-xl text-tritonexus-purple font-bold">T</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Completed</p>
-                  <p className="text-3xl font-bold text-foreground mt-1">14</p>
-                </div>
-                <div className="h-12 w-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                  <span className="text-xl text-green-500 font-bold">C</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Team Members</p>
-                  <p className="text-3xl font-bold text-foreground mt-1">4</p>
-                </div>
-                <div className="h-12 w-12 bg-tritonexus-pink/10 rounded-full flex items-center justify-center">
-                  <span className="text-xl text-tritonexus-pink font-bold">M</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          {/* Team Members Grid */}
-          <div>
-            <h2 className="text-xl font-bold mb-4 flex items-center">
-              <span className="bg-tritonexus-purple/20 text-tritonexus-purple w-8 h-8 rounded-full inline-flex items-center justify-center mr-2">
-                <span className="text-sm">T</span>
-              </span>
-              Team Overview
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-              {teamMembers.map(member => (
-                <MemberCard key={member.id} member={member} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 

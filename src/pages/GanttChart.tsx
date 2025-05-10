@@ -3,14 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import ThemeToggle from '../components/ThemeToggle';
-import Footer from '../components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ChartContainer, ChartTooltipContent, ChartTooltip } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import GanttTask from '../components/GanttTask';
 import AddTaskDialog from '../components/AddTaskDialog';
+import DashboardLayout from '../components/DashboardLayout';
 
 // Mock data for the Gantt chart
 const initialTasks = [
@@ -125,165 +124,148 @@ const GanttChart = () => {
   const sortedTasks = [...tasks].sort((a, b) => a.start.getTime() - b.start.getTime());
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-muted/30">
-      <header className="bg-background/80 backdrop-blur-md shadow-sm px-4 py-3 fixed top-0 left-0 right-0 z-10">
-        <div className="container-custom flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gradient">Project Timeline</h1>
-          <div className="flex items-center space-x-3">
-            <Button 
-              variant="outline" 
-              onClick={() => window.history.back()}
-              className="hidden sm:inline-flex"
-            >
-              Back
-            </Button>
-            <Button 
-              onClick={() => setIsAddTaskOpen(true)}
-              className="bg-gradient-to-r from-tritonexus-purple to-tritonexus-pink text-white"
-            >
-              Add Task
-            </Button>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+    <DashboardLayout title="Project Timeline">
+      <div className="mb-6">
+        <Button 
+          onClick={() => setIsAddTaskOpen(true)}
+          className="bg-gradient-to-r from-tritonexus-purple to-tritonexus-pink text-white"
+        >
+          Add Task
+        </Button>
+      </div>
 
-      <main className="flex-1 container-custom mt-20 mb-8">
-        <Card className="border border-border shadow-lg bg-background/70 backdrop-blur-sm mb-6">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex justify-between items-center">
-              <span>Overall Project Progress</span>
-              <span className="text-2xl font-bold">{overallProgress}%</span>
-            </CardTitle>
+      <Card className="border border-border shadow-lg bg-background/70 backdrop-blur-sm mb-6">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex justify-between items-center">
+            <span>Overall Project Progress</span>
+            <span className="text-2xl font-bold">{overallProgress}%</span>
+          </CardTitle>
+          <CardDescription>
+            Project timeline from {formatDate(startDate)} to {formatDate(endDate)}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="relative pt-1">
+            <Progress 
+              value={overallProgress} 
+              className="h-4 bg-muted"
+            />
+            <div 
+              className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white"
+              style={{pointerEvents: 'none'}}
+            >
+              {overallProgress}% Complete
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="mb-6 overflow-x-auto">
+        <Card className="border border-border shadow-lg bg-background/70 backdrop-blur-sm min-w-full">
+          <CardHeader>
+            <CardTitle>Gantt Timeline</CardTitle>
             <CardDescription>
-              Project timeline from {formatDate(startDate)} to {formatDate(endDate)}
+              Visualize project tasks and their timelines
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="relative pt-1">
-              <Progress 
-                value={overallProgress} 
-                className="h-4 bg-muted"
-              />
-              <div 
-                className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white"
-                style={{pointerEvents: 'none'}}
+            <div className="h-[400px] min-w-[600px]">
+              <ChartContainer
+                config={{
+                  inProgress: {
+                    theme: { light: "#9b87f5", dark: "#9b87f5" },
+                    label: "In Progress",
+                  },
+                  completed: {
+                    theme: { light: "#D946EF", dark: "#D946EF" },
+                    label: "Completed",
+                  },
+                  notStarted: {
+                    theme: { light: "#7E69AB", dark: "#7E69AB" },
+                    label: "Not Started",
+                  },
+                }}
               >
-                {overallProgress}% Complete
-              </div>
+                <BarChart
+                  layout="vertical"
+                  data={sortedTasks.map(task => ({
+                    name: task.name,
+                    start: task.start.getTime(),
+                    end: task.end.getTime(),
+                    progress: task.progress,
+                    status: task.status,
+                    assignee: task.assignee,
+                    id: task.id,
+                  }))}
+                  margin={{ top: 20, right: 30, left: 100, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                  <XAxis 
+                    type="number" 
+                    domain={[startDate.getTime(), endDate.getTime()]}
+                    tickFormatter={(timestamp) => formatDate(new Date(timestamp))}
+                    allowDataOverflow
+                  />
+                  <YAxis 
+                    dataKey="name" 
+                    type="category" 
+                    width={80} 
+                    tickLine={false}
+                  />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-background border border-border p-3 rounded-md shadow-lg">
+                            <p className="font-bold">{data.name}</p>
+                            <p>Assignee: {data.assignee}</p>
+                            <p>Status: {data.status}</p>
+                            <p>Progress: {data.progress}%</p>
+                            <p>Duration: {formatDate(new Date(data.start))} - {formatDate(new Date(data.end))}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend />
+                  <Bar 
+                    dataKey="progress" 
+                    fill="url(#progressGradient)" 
+                    background={{ fill: '#eee' }}
+                    minPointSize={2}
+                    barSize={20}
+                    label={{ position: 'center', fill: 'white', fontSize: 12 }}
+                  >
+                    <defs>
+                      <linearGradient id="progressGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#9b87f5" />
+                        <stop offset="100%" stopColor="#D946EF" />
+                      </linearGradient>
+                    </defs>
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
             </div>
           </CardContent>
         </Card>
+      </div>
 
-        <div className="mb-6 overflow-x-auto">
-          <Card className="border border-border shadow-lg bg-background/70 backdrop-blur-sm min-w-full">
-            <CardHeader>
-              <CardTitle>Gantt Timeline</CardTitle>
-              <CardDescription>
-                Visualize project tasks and their timelines
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px] min-w-[600px]">
-                <ChartContainer
-                  config={{
-                    inProgress: {
-                      theme: { light: "#9b87f5", dark: "#9b87f5" },
-                      label: "In Progress",
-                    },
-                    completed: {
-                      theme: { light: "#D946EF", dark: "#D946EF" },
-                      label: "Completed",
-                    },
-                    notStarted: {
-                      theme: { light: "#7E69AB", dark: "#7E69AB" },
-                      label: "Not Started",
-                    },
-                  }}
-                >
-                  <BarChart
-                    layout="vertical"
-                    data={sortedTasks.map(task => ({
-                      name: task.name,
-                      start: task.start.getTime(),
-                      end: task.end.getTime(),
-                      progress: task.progress,
-                      status: task.status,
-                      assignee: task.assignee,
-                      id: task.id,
-                    }))}
-                    margin={{ top: 20, right: 30, left: 100, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                    <XAxis 
-                      type="number" 
-                      domain={[startDate.getTime(), endDate.getTime()]}
-                      tickFormatter={(timestamp) => formatDate(new Date(timestamp))}
-                      allowDataOverflow
-                    />
-                    <YAxis 
-                      dataKey="name" 
-                      type="category" 
-                      width={80} 
-                      tickLine={false}
-                    />
-                    <Tooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          const data = payload[0].payload;
-                          return (
-                            <div className="bg-background border border-border p-3 rounded-md shadow-lg">
-                              <p className="font-bold">{data.name}</p>
-                              <p>Assignee: {data.assignee}</p>
-                              <p>Status: {data.status}</p>
-                              <p>Progress: {data.progress}%</p>
-                              <p>Duration: {formatDate(new Date(data.start))} - {formatDate(new Date(data.end))}</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Legend />
-                    <Bar 
-                      dataKey="progress" 
-                      fill="url(#progressGradient)" 
-                      background={{ fill: '#eee' }}
-                      minPointSize={2}
-                      barSize={20}
-                      label={{ position: 'center', fill: 'white', fontSize: 12 }}
-                    >
-                      <defs>
-                        <linearGradient id="progressGradient" x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#9b87f5" />
-                          <stop offset="100%" stopColor="#D946EF" />
-                        </linearGradient>
-                      </defs>
-                    </Bar>
-                  </BarChart>
-                </ChartContainer>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold">Task Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortedTasks.map(task => (
+            <GanttTask 
+              key={task.id} 
+              task={task} 
+              onUpdate={handleTaskUpdate} 
+              onEdit={() => handleEditTask(task)} 
+              onDelete={() => handleDeleteTask(task.id)}
+            />
+          ))}
         </div>
-
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold">Task Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sortedTasks.map(task => (
-              <GanttTask 
-                key={task.id} 
-                task={task} 
-                onUpdate={handleTaskUpdate} 
-                onEdit={() => handleEditTask(task)} 
-                onDelete={() => handleDeleteTask(task.id)}
-              />
-            ))}
-          </div>
-        </div>
-      </main>
-
-      <Footer />
+      </div>
 
       <AddTaskDialog 
         isOpen={isAddTaskOpen} 
@@ -295,7 +277,7 @@ const GanttChart = () => {
         onUpdateTask={handleTaskUpdate}
         existingTask={editingTask}
       />
-    </div>
+    </DashboardLayout>
   );
 };
 
