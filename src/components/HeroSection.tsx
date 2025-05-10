@@ -1,7 +1,22 @@
-
 import React from 'react';
 
-const HeroSection = () => {
+const HeroSection: React.FC = () => {
+  const handleAnalyticsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const analyticsSection = document.getElementById('analytics');
+    if (analyticsSection) {
+      analyticsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleFeaturesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const featuresSection = document.getElementById('features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative overflow-hidden pt-222 pb-16 md:pt-40 md:pb-24 bg-hero-pattern">
       {/* Gradient Orb Decorations */}
@@ -18,10 +33,10 @@ const HeroSection = () => {
             and track project progress in real-time.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <a href="#features" className="btn-primary">
+            <a href="#features" onClick={handleFeaturesClick} className="btn-primary">
               Explore Features
             </a>
-            <a href="#analytics" className="btn-outline">
+            <a href="#analytics" onClick={handleAnalyticsClick} className="btn-outline">
               View Analytics
             </a>
           </div>

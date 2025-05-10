@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Linkedin, Github, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Profile from '@/pages/profile.jpg';
-import Aman from '@/pages/Aman.jpg'
+import Aman from '@/pages/Aman.jpg';
 import Darshil from '@/pages/Darshil.jpg'
+
 interface TeamMember {
   name: string;
   role: string;
@@ -50,7 +51,7 @@ const teamMembers: TeamMember[] = [
     image: Aman,
     linkedin: "https://linkedin.com",
     github: "https://github.com",
-    email: "darshil@example.com",
+    email: "aman@example.com",
     bio: "Software architect with expertise in system design and implementation. Leads the technical direction of our projects."
   },
   {
@@ -59,7 +60,7 @@ const teamMembers: TeamMember[] = [
     image: Profile,
     linkedin: "https://linkedin.com",
     github: "https://github.com",
-    email: "darshil@example.com",
+    email: "navya@example.com",
     bio: "Software architect with expertise in system design and implementation. Leads the technical direction of our projects."
   },
   {
@@ -68,7 +69,7 @@ const teamMembers: TeamMember[] = [
     image: Profile,
     linkedin: "https://linkedin.com",
     github: "https://github.com",
-    email: "darshil@example.com",
+    email: "varsha@example.com",
     bio: "Software architect with expertise in system design and implementation. Leads the technical direction of our projects."
   },
   {
@@ -77,7 +78,7 @@ const teamMembers: TeamMember[] = [
     image: Profile,
     linkedin: "https://linkedin.com",
     github: "https://github.com",
-    email: "darshil@example.com",
+    email: "dhruva@example.com",
     bio: "Software architect with expertise in system design and implementation. Leads the technical direction of our projects."
   },
   {
@@ -86,7 +87,7 @@ const teamMembers: TeamMember[] = [
     image: Profile,
     linkedin: "https://linkedin.com",
     github: "https://github.com",
-    email: "darshil@example.com",
+    email: "musaddik@example.com",
     bio: "Software architect with expertise in system design and implementation. Leads the technical direction of our projects."
   }
 ];

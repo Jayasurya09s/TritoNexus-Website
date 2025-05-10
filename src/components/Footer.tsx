@@ -1,8 +1,34 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleFeaturesClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate('/');
+    // Wait for navigation to complete before scrolling
+    setTimeout(() => {
+      const featuresSection = document.getElementById('features');
+      if (featuresSection) {
+        featuresSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const handleAnalyticsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate('/');
+    // Wait for navigation to complete before scrolling
+    setTimeout(() => {
+      const analyticsSection = document.getElementById('analytics');
+      if (analyticsSection) {
+        analyticsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   return (
     <footer className="bg-muted/30 py-12 border-t border-muted">
       <div className="container-custom">
@@ -18,10 +44,9 @@ const Footer = () => {
             <div>
               <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
-                <li><a href="#analytics" className="hover:text-foreground transition-colors">Analytics</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Integrations</a></li>
+                <li><a href="/#features" onClick={handleFeaturesClick} className="hover:text-foreground transition-colors">Features</a></li>
+                <li><a href="/#analytics" onClick={handleAnalyticsClick} className="hover:text-foreground transition-colors">Analytics</a></li>
+                
               </ul>
             </div>
             
