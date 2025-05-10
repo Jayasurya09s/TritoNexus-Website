@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 
@@ -53,9 +54,12 @@ const Navbar = () => {
           
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <a href="#contact" className="btn-primary">
-              Get Started
-            </a>
+            <Link to="/workflow" className="btn-outline hover:bg-muted/50 transition-all">
+              Workflow
+            </Link>
+            <Link to="/login" className="btn-primary">
+              Login
+            </Link>
           </div>
         </nav>
         
@@ -108,13 +112,20 @@ const Navbar = () => {
                 {link.name}
               </a>
             ))}
-            <a
-              href="#contact"
-              className="btn-primary w-full text-center mt-4"
+            <Link
+              to="/workflow"
+              className="btn-outline w-full text-center py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Get Started
-            </a>
+              Workflow
+            </Link>
+            <Link
+              to="/login"
+              className="btn-primary w-full text-center mt-2"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Login
+            </Link>
           </nav>
         </div>
       )}
