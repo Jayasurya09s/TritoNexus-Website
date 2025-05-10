@@ -1,194 +1,224 @@
 
-import React, { useState } from 'react';
-import { BarChart, PieChart, Bar, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, ResponsiveContainer } from 'recharts';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, ResponsiveContainer } from "recharts";
 
-const ChartSection = () => {
-  const [activeChart, setActiveChart] = useState('bar');
+const barChartData = [
+  { name: "Jan", Tasks: 40, Completed: 24 },
+  { name: "Feb", Tasks: 55, Completed: 45 },
+  { name: "Mar", Tasks: 65, Completed: 51 },
+  { name: "Apr", Tasks: 60, Completed: 48 },
+  { name: "May", Tasks: 80, Completed: 62 },
+  { name: "Jun", Tasks: 90, Completed: 78 },
+];
 
-  // Sample data for the charts
-  const barData = [
-    { name: 'Mon', tasks: 12, completed: 8 },
-    { name: 'Tue', tasks: 19, completed: 15 },
-    { name: 'Wed', tasks: 15, completed: 10 },
-    { name: 'Thu', tasks: 18, completed: 14 },
-    { name: 'Fri', tasks: 16, completed: 12 },
-  ];
+const pieChartData = [
+  { name: "Development", value: 35 },
+  { name: "Design", value: 25 },
+  { name: "Marketing", value: 20 },
+  { name: "Research", value: 15 },
+  { name: "Planning", value: 5 },
+];
 
-  const pieData = [
-    { name: 'Completed', value: 65, color: '#9b87f5' },
-    { name: 'In Progress', value: 25, color: '#D946EF' },
-    { name: 'Pending', value: 10, color: '#7E69AB' },
-  ];
+const lineChartData = [
+  { name: "Week 1", Productivity: 4000, Engagement: 2400 },
+  { name: "Week 2", Productivity: 3000, Engagement: 1398 },
+  { name: "Week 3", Productivity: 2000, Engagement: 9800 },
+  { name: "Week 4", Productivity: 2780, Engagement: 3908 },
+  { name: "Week 5", Productivity: 1890, Engagement: 4800 },
+  { name: "Week 6", Productivity: 2390, Engagement: 3800 },
+  { name: "Week 7", Productivity: 3490, Engagement: 4300 },
+];
 
-  // Custom tooltip for the bar chart
-  const CustomBarTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background p-3 border border-border rounded-lg shadow-lg">
-          <p className="font-medium">{`${payload[0].payload.name}`}</p>
-          <p className="text-sm text-tritonexus-purple">
-            {`Tasks: ${payload[0].value}`}
-          </p>
-          <p className="text-sm text-tritonexus-pink">
-            {`Completed: ${payload[1].value}`}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+const COLORS = ["#9b87f5", "#D946EF", "#7E69AB", "#D6BCFA", "#FFDEE2"];
 
-  // Custom tooltip for the pie chart
-  const CustomPieTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background p-3 border border-border rounded-lg shadow-lg">
-          <p className="font-medium" style={{ color: payload[0].payload.color }}>
-            {payload[0].name}
-          </p>
-          <p className="text-sm">{`${payload[0].value}%`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
+const ChartSection: React.FC = () => {
+  const [activeTab, setActiveTab] = useState("bar");
+  const [chartWidth, setChartWidth] = useState(500);
+
+  // Update chart width on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setChartWidth(300);
+      } else {
+        setChartWidth(500);
+      }
+    };
+    
+    handleResize(); // Set initial width
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
-    <section id="analytics" className="section bg-background">
-      <div className="container-custom">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+    <section id="charts" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/40">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Visualize Your <span className="text-gradient">Progress</span>
+            <span className="text-gradient">Interactive Analytics</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Interactive charts provide real-time insights into your team's performance
+          <p className="text-xl text-foreground/80 max-w-3xl mx-auto">
+            Visualize your project data with our powerful and interactive charts.
+            Gain valuable insights and make data-driven decisions.
           </p>
         </div>
 
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex bg-muted/30 rounded-lg p-1.5">
-            <button
-              className={`px-4 py-2 rounded-md transition-all ${
-                activeChart === 'bar'
-                  ? 'bg-background shadow-sm'
-                  : 'hover:bg-muted'
-              }`}
-              onClick={() => setActiveChart('bar')}
-            >
-              Task Distribution
-            </button>
-            <button
-              className={`px-4 py-2 rounded-md transition-all ${
-                activeChart === 'pie'
-                  ? 'bg-background shadow-sm'
-                  : 'hover:bg-muted'
-              }`}
-              onClick={() => setActiveChart('pie')}
-            >
-              Project Status
-            </button>
+        <Tabs defaultValue="bar" className="w-full" onValueChange={setActiveTab}>
+          <div className="flex justify-center mb-8">
+            <TabsList>
+              <TabsTrigger value="bar">Task Progress</TabsTrigger>
+              <TabsTrigger value="pie">Project Allocation</TabsTrigger>
+              <TabsTrigger value="line">Team Performance</TabsTrigger>
+            </TabsList>
           </div>
-        </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <Card className="border border-border bg-card hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle>
+                  {activeTab === "bar" && "Monthly Task Progress"}
+                  {activeTab === "pie" && "Project Resource Allocation"}
+                  {activeTab === "line" && "Team Performance Metrics"}
+                </CardTitle>
+                <CardDescription>
+                  {activeTab === "bar" && "Visualization of tasks created vs completed each month"}
+                  {activeTab === "pie" && "How resources are allocated across different project areas"}
+                  {activeTab === "line" && "Team productivity and engagement over time"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-2 flex justify-center">
+                <TabsContent value="bar" className="mt-0 w-full">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: "var(--background)",
+                          border: "1px solid var(--border)",
+                          borderRadius: "8px"
+                        }} 
+                      />
+                      <Legend />
+                      <Bar dataKey="Tasks" fill="#9b87f5" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="Completed" fill="#D946EF" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </TabsContent>
+                <TabsContent value="pie" className="mt-0 w-full">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={pieChartData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={true}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {pieChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: "var(--background)",
+                          border: "1px solid var(--border)",
+                          borderRadius: "8px"
+                        }} 
+                      />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </TabsContent>
+                <TabsContent value="line" className="mt-0 w-full">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={lineChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: "var(--background)",
+                          border: "1px solid var(--border)",
+                          borderRadius: "8px"
+                        }} 
+                      />
+                      <Legend />
+                      <Line type="monotone" dataKey="Productivity" stroke="#9b87f5" activeDot={{ r: 8 }} />
+                      <Line type="monotone" dataKey="Engagement" stroke="#D946EF" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </TabsContent>
+              </CardContent>
+            </Card>
 
-        <div className="bg-gradient-to-br from-background to-muted/50 border border-border rounded-xl p-4 md:p-8 shadow-lg">
-          {activeChart === 'bar' ? (
-            <div className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--muted)" opacity={0.3} />
-                  <XAxis dataKey="name" tick={{ fill: 'var(--foreground)' }} />
-                  <YAxis tick={{ fill: 'var(--foreground)' }} />
-                  <Tooltip content={<CustomBarTooltip />} />
-                  <Legend wrapperStyle={{ paddingTop: '10px' }} />
-                  <Bar dataKey="tasks" name="Total Tasks" fill="#9b87f5" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="completed" name="Completed" fill="#D946EF" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold">
+                {activeTab === "bar" && "Task Progress Insights"}
+                {activeTab === "pie" && "Resource Allocation Breakdown"}
+                {activeTab === "line" && "Performance Analytics"}
+              </h3>
+              <p className="text-foreground/80">
+                {activeTab === "bar" && 
+                  "Track your team's productivity with our task progress charts. See how many tasks are created and completed each month, identify trends, and optimize workflows for better efficiency."}
+                {activeTab === "pie" && 
+                  "Understand where your project resources are being allocated. This visualization helps you identify if any area is under-resourced or if there are opportunities to rebalance your team's efforts."}
+                {activeTab === "line" && 
+                  "Monitor your team's performance metrics over time with our interactive line charts. Track productivity and engagement trends to make data-driven decisions for team optimization."}
+              </p>
+              <ul className="space-y-3">
+                {activeTab === "bar" && [
+                  "Compare tasks created vs. completed",
+                  "Identify productivity trends over time",
+                  "Set realistic goals based on historical data",
+                  "Export data for stakeholder reports"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tritopurple">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+                {activeTab === "pie" && [
+                  "Visualize project resource distribution",
+                  "Identify areas that need more attention",
+                  "Optimize team allocation for better results",
+                  "Balance workloads across project areas"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tritopurple">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+                {activeTab === "line" && [
+                  "Track team productivity week by week",
+                  "Measure engagement metrics over time",
+                  "Identify correlation between metrics",
+                  "Forecast future performance based on trends"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-tritopurple">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          ) : (
-            <div className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={150}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-                      const radius = outerRadius + 10;
-                      const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
-                      const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
-                      return (
-                        <text
-                          x={x}
-                          y={y}
-                          fill="var(--foreground)"
-                          textAnchor={x > cx ? 'start' : 'end'}
-                          dominantBaseline="central"
-                          className="text-xs sm:text-sm"
-                        >
-                          {`${(percent * 100).toFixed(0)}%`}
-                        </text>
-                      );
-                    }}
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<CustomPieTooltip />} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-        </div>
-{/* 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-          <div className="feature-card flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-tritonexus-purple/20 flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-tritonexus-purple">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-xl mb-1">87%</h3>
-            <p className="text-muted-foreground text-sm">Productivity Increase</p>
           </div>
-          
-          <div className="feature-card flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-tritonexus-pink/20 flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-tritonexus-pink">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-xl mb-1">32%</h3>
-            <p className="text-muted-foreground text-sm">Time Saved</p>
-          </div>
-          
-          <div className="feature-card flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-tritonexus-purple-dark/20 flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-tritonexus-purple-dark">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-xl mb-1">10k+</h3>
-            <p className="text-muted-foreground text-sm">Active Users</p>
-          </div>
-          
-          <div className="feature-card flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-tritonexus-pink/20 flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-tritonexus-pink">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-xl mb-1">95%</h3>
-            <p className="text-muted-foreground text-sm">Customer Satisfaction</p>
-          </div>
-        </div> */}
+        </Tabs>
       </div>
     </section>
   );
