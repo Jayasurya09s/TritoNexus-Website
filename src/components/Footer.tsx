@@ -46,7 +46,6 @@ const Footer = () => {
               <ul className="space-y-2 text-muted-foreground">
                 <li><a href="/#features" onClick={handleFeaturesClick} className="hover:text-foreground transition-colors">Features</a></li>
                 <li><a href="/#analytics" onClick={handleAnalyticsClick} className="hover:text-foreground transition-colors">Analytics</a></li>
-                
               </ul>
             </div>
             
@@ -54,8 +53,8 @@ const Footer = () => {
               <h3 className="font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-muted-foreground">
                 <li><Link to="/AboutUs" className="hover:text-foreground transition-colors">About Us</Link></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Team</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Careers</a></li>
+              
+              
                 <li><a href="#" className="hover:text-foreground transition-colors">Blog</a></li>
               </ul>
             </div>
@@ -63,9 +62,8 @@ const Footer = () => {
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Support</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Privacy</a></li>
+               
+                <li><Link to="/PrivacyPolicy" className="hover:text-foreground transition-colors">Privacy</Link></li>
                 <li><a href="#" className="hover:text-foreground transition-colors">Terms</a></li>
               </ul>
             </div>
@@ -76,7 +74,7 @@ const Footer = () => {
           <p className="text-sm text-muted-foreground mb-4 md:mb-0">
             &copy; {new Date().getFullYear()} TritoNexus. All rights reserved.
           </p>
-          <div className="flex space-x-6">
+          <div className="flex space-x-4">
             <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
               <span className="sr-only">Twitter</span>
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
