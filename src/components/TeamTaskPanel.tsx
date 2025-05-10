@@ -1,11 +1,14 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { UserPlus, Pen, Trash } from 'lucide-react';
+import { UserPlus, Pen, Trash, Check } from 'lucide-react';
+import AssignTaskDialog from './AssignTaskDialog';
+import EditTaskDialog from './EditTaskDialog';
+import { useToast } from "@/components/ui/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface TeamMember {
   id: number;
@@ -18,12 +21,26 @@ interface TeamMember {
   progress: number;
 }
 
-const TeamTaskPanel = () => {
-  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+interface Task {
+  id: number;
+  title: string;
+  description: string;
+  dueDate: Date;
+  priority: string;
+  status: 'pending' | 'in-progress' | 'completed';
+}
 
-  // Mock team member data
-  const teamMembers: TeamMember[] = [
+const TeamTaskPanel = () => {
+  const { toast } = useToast();
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const [selectedTasksToRemove, setSelectedTasksToRemove] = useState<number[]>([]);
+  const [memberTasks, setMemberTasks] = useState<Record<number, Task[]>>({});
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     {
       id: 1,
       name: "Anshuman pati",
@@ -44,7 +61,7 @@ const TeamTaskPanel = () => {
       tasksCompleted: 7,
       progress: 46
     },
-      {
+    {
       id: 3,
       name: "Darshil Nathwani",
       role: "Software Lead",
@@ -104,11 +121,174 @@ const TeamTaskPanel = () => {
       tasksCompleted: 4,
       progress: 44
     }
-  ];
+  ]);
 
   const handleOpenMemberDetails = (member: TeamMember) => {
     setSelectedMember(member);
     setIsDialogOpen(true);
+  };
+
+  const handleOpenEditTasks = (member: TeamMember, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedMember(member);
+    setIsDialogOpen(true);
+  };
+
+  const handleOpenRemoveTasks = (member: TeamMember, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedMember(member);
+    setSelectedTasksToRemove([]);
+    setIsRemoveDialogOpen(true);
+  };
+
+  const handleTaskSelection = (taskId: number) => {
+    setSelectedTasksToRemove(prev => 
+      prev.includes(taskId) 
+        ? prev.filter(id => id !== taskId)
+        : [...prev, taskId]
+    );
+  };
+
+  const handleRemoveSelectedTasks = () => {
+    if (!selectedMember || selectedTasksToRemove.length === 0) return;
+
+    setMemberTasks(prev => {
+      const updatedTasks = {
+        ...prev,
+        [selectedMember.id]: prev[selectedMember.id].filter(task => !selectedTasksToRemove.includes(task.id))
+      };
+
+      // Update team member's progress
+      const tasks = updatedTasks[selectedMember.id] || [];
+      const completedTasks = tasks.filter(task => task.status === 'completed').length;
+
+      setTeamMembers(prevMembers => prevMembers.map(member => {
+        if (member.id === selectedMember.id) {
+          const newTasksAssigned = member.tasksAssigned - selectedTasksToRemove.length;
+          return {
+            ...member,
+            tasksAssigned: newTasksAssigned,
+            tasksCompleted: completedTasks,
+            progress: Math.round((completedTasks / newTasksAssigned) * 100)
+          };
+        }
+        return member;
+      }));
+
+      return updatedTasks;
+    });
+
+    toast({
+      title: "Tasks Removed",
+      description: `${selectedTasksToRemove.length} task(s) have been successfully removed.`,
+      className: "bg-green-500/10 border-green-500/20 text-green-500",
+    });
+
+    setIsRemoveDialogOpen(false);
+    setSelectedTasksToRemove([]);
+  };
+
+  const handleAssignTask = (memberId: number, taskData: any) => {
+    const newTask: Task = {
+      id: Date.now(),
+      ...taskData,
+      status: 'pending'
+    };
+
+    setMemberTasks(prev => ({
+      ...prev,
+      [memberId]: [...(prev[memberId] || []), newTask]
+    }));
+
+    setTeamMembers(prev => prev.map(member => {
+      if (member.id === memberId) {
+        const newTasksAssigned = member.tasksAssigned + 1;
+        const progress = Math.round((member.tasksCompleted / newTasksAssigned) * 100);
+        return {
+          ...member,
+          tasksAssigned: newTasksAssigned,
+          progress
+        };
+      }
+      return member;
+    }));
+  };
+
+  const handleEditTask = (taskId: number, updatedTaskData: Partial<Task>) => {
+    if (!selectedMember) return;
+
+    setMemberTasks(prev => {
+      const updatedTasks = {
+        ...prev,
+        [selectedMember.id]: prev[selectedMember.id].map(task => 
+          task.id === taskId ? { ...task, ...updatedTaskData } : task
+        )
+      };
+
+      // Update team member's progress if task status changed
+      if (updatedTaskData.status) {
+        const tasks = updatedTasks[selectedMember.id] || [];
+        const completedTasks = tasks.filter(task => 
+          task.id === taskId ? updatedTaskData.status === 'completed' : task.status === 'completed'
+        ).length;
+
+        setTeamMembers(prevMembers => prevMembers.map(member => {
+          if (member.id === selectedMember.id) {
+            return {
+              ...member,
+              tasksCompleted: completedTasks,
+              progress: Math.round((completedTasks / member.tasksAssigned) * 100)
+            };
+          }
+          return member;
+        }));
+      }
+
+      return updatedTasks;
+    });
+  };
+
+  const handleOpenEditTask = (task: Task, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedTask(task);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleRemoveTask = (taskId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!selectedMember) return;
+
+    setMemberTasks(prev => {
+      const updatedTasks = {
+        ...prev,
+        [selectedMember.id]: prev[selectedMember.id].filter(task => task.id !== taskId)
+      };
+
+      // Update team member's progress
+      const tasks = updatedTasks[selectedMember.id] || [];
+      const completedTasks = tasks.filter(task => task.status === 'completed').length;
+
+      setTeamMembers(prevMembers => prevMembers.map(member => {
+        if (member.id === selectedMember.id) {
+          const newTasksAssigned = member.tasksAssigned - 1;
+          return {
+            ...member,
+            tasksAssigned: newTasksAssigned,
+            tasksCompleted: completedTasks,
+            progress: Math.round((completedTasks / newTasksAssigned) * 100)
+          };
+        }
+        return member;
+      }));
+
+      return updatedTasks;
+    });
+
+    toast({
+      title: "Task Removed",
+      description: "The task has been successfully removed.",
+      className: "bg-green-500/10 border-green-500/20 text-green-500",
+    });
   };
 
   return (
@@ -147,15 +327,34 @@ const TeamTaskPanel = () => {
                 />
               </div>
               <div className="flex space-x-1">
-                <Button variant="outline" size="sm" className="flex-1 text-xs">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedMember(member);
+                    setIsAssignDialogOpen(true);
+                  }}
+                >
                   <UserPlus className="h-3 w-3 mr-1" />
                   Assign
                 </Button>
-                <Button variant="outline" size="sm" className="flex-1 text-xs">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 text-xs"
+                  onClick={(e) => handleOpenEditTasks(member, e)}
+                >
                   <Pen className="h-3 w-3 mr-1" />
                   Edit
                 </Button>
-                <Button variant="outline" size="sm" className="flex-1 text-xs text-destructive hover:text-destructive">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 text-xs text-destructive hover:text-destructive"
+                  onClick={(e) => handleOpenRemoveTasks(member, e)}
+                >
                   <Trash className="h-3 w-3 mr-1" />
                   Remove
                 </Button>
@@ -183,7 +382,7 @@ const TeamTaskPanel = () => {
                     <p className="text-sm text-muted-foreground mt-0.5">{selectedMember.role}</p>
                   </div>
                 </DialogTitle>
-                <DialogDescription className="pt-4">
+                <DialogDescription>
                   <div className="flex justify-between text-sm mb-2">
                     <span>Task Progress</span>
                     <span className="font-medium">{selectedMember.progress}%</span>
@@ -195,34 +394,58 @@ const TeamTaskPanel = () => {
                   
                   <h3 className="font-medium mb-2">Assigned Tasks</h3>
                   <div className="space-y-3 max-h-[300px] overflow-y-auto">
-                    {/* Mock task list */}
-                    {Array.from({ length: selectedMember.tasksAssigned }).map((_, idx) => (
+                    {memberTasks[selectedMember.id]?.map((task) => (
                       <div 
-                        key={idx} 
+                        key={task.id} 
                         className="p-3 rounded-md bg-muted/50 border border-border/50 flex justify-between"
                       >
                         <div>
-                          <p className="font-medium text-sm">
-                            Task #{idx + 1}: {idx < selectedMember.tasksCompleted ? 'Completed' : 'In Progress'}
+                          <p className="font-medium text-sm">{task.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Due: {task.dueDate.toLocaleDateString()}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Due: {new Date(Date.now() + (idx * 86400000)).toLocaleDateString()}
+                            Priority: {task.priority}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Status: {task.status}
                           </p>
                         </div>
-                        <div className="flex items-center">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 w-8 p-0"
+                            onClick={(e) => handleOpenEditTask(task, e)}
+                          >
                             <Pen className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                            onClick={(e) => handleRemoveTask(task.id, e)}
+                          >
+                            <Trash className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
                     ))}
+                    {(!memberTasks[selectedMember.id] || memberTasks[selectedMember.id].length === 0) && (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        No tasks assigned yet
+                      </p>
+                    )}
                   </div>
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter className="flex flex-col sm:flex-row gap-2">
+              <DialogFooter>
                 <Button 
                   className="w-full sm:w-auto bg-gradient-to-r from-tritonexus-purple to-tritonexus-pink text-white"
-                  onClick={() => setIsDialogOpen(false)}
+                  onClick={() => {
+                    setIsDialogOpen(false);
+                    setIsAssignDialogOpen(true);
+                  }}
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
                   Assign New Task
@@ -233,6 +456,106 @@ const TeamTaskPanel = () => {
                   onClick={() => setIsDialogOpen(false)}
                 >
                   Close
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Assign Task Dialog */}
+      {selectedMember && (
+        <AssignTaskDialog
+          isOpen={isAssignDialogOpen}
+          onClose={() => setIsAssignDialogOpen(false)}
+          onAssignTask={(taskData) => handleAssignTask(selectedMember.id, taskData)}
+          memberName={selectedMember.name}
+        />
+      )}
+
+      {/* Edit Task Dialog */}
+      {selectedMember && selectedTask && (
+        <EditTaskDialog
+          isOpen={isEditDialogOpen}
+          onClose={() => {
+            setIsEditDialogOpen(false);
+            setSelectedTask(null);
+          }}
+          onEditTask={handleEditTask}
+          task={selectedTask}
+          memberName={selectedMember.name}
+        />
+      )}
+
+      {/* Remove Tasks Dialog */}
+      <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] bg-background/90 backdrop-blur-xl border-tritonexus-purple/20">
+          {selectedMember && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={selectedMember.avatar} />
+                    <AvatarFallback className="bg-gradient-to-br from-tritonexus-purple to-tritonexus-pink text-white">
+                      {selectedMember.initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <span className="text-xl">Remove Tasks</span>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      Select tasks to remove from {selectedMember.name}
+                    </p>
+                  </div>
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                {memberTasks[selectedMember.id]?.map((task) => (
+                  <div 
+                    key={task.id} 
+                    className="p-3 rounded-md bg-muted/50 border border-border/50 flex items-start gap-3"
+                  >
+                    <Checkbox
+                      checked={selectedTasksToRemove.includes(task.id)}
+                      onCheckedChange={() => handleTaskSelection(task.id)}
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">{task.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Due: {task.dueDate.toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Priority: {task.priority}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Status: {task.status}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {(!memberTasks[selectedMember.id] || memberTasks[selectedMember.id].length === 0) && (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    No tasks assigned yet
+                  </p>
+                )}
+              </div>
+              <DialogFooter>
+                <Button 
+                  className="w-full sm:w-auto bg-gradient-to-r from-tritonexus-purple to-tritonexus-pink text-white"
+                  onClick={handleRemoveSelectedTasks}
+                  disabled={selectedTasksToRemove.length === 0}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Remove Selected Tasks
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full sm:w-auto"
+                  onClick={() => {
+                    setIsRemoveDialogOpen(false);
+                    setSelectedTasksToRemove([]);
+                  }}
+                >
+                  Cancel
                 </Button>
               </DialogFooter>
             </>
