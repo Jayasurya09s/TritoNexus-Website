@@ -129,10 +129,17 @@ const Dashboard = () => {
         </div>
         
         {/* Right Column - Notes and Chatbot */}
+        <div>
         <div className="space-y-6">
           <NotesSection />
-          <ChatBot />
+          
         </div>
+
+      <div>
+        <ChatBot/>
+      </div>
+        </div>
+
       </div>
     </DashboardLayout>
   );

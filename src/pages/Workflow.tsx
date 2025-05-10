@@ -8,9 +8,9 @@ import { Clock, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 const teamMembers = [
   {
     id: 1,
-    name: 'Alex Johnson',
-    role: 'Product Designer',
-    avatar: 'AJ',
+    name: 'Anshuman Pati',
+    role: 'Team lead',
+    avatar: 'AP',
     tasks: [
       { id: 1, title: 'Design new dashboard UI', status: 'completed', dueDate: '2025-05-15' },
       { id: 2, title: 'Create user personas', status: 'in-progress', dueDate: '2025-05-20' }
@@ -18,9 +18,9 @@ const teamMembers = [
   },
   {
     id: 2,
-    name: 'Sarah Williams',
-    role: 'Frontend Developer',
-    avatar: 'SW',
+    name: 'Darshil Natwani',
+    role: 'Software lead',
+    avatar: 'DN',
     tasks: [
       { id: 3, title: 'Implement responsive navbar', status: 'in-progress', dueDate: '2025-05-12' },
       { id: 4, title: 'Fix login form validation', status: 'completed', dueDate: '2025-05-10' },
@@ -29,7 +29,7 @@ const teamMembers = [
   },
   {
     id: 3,
-    name: 'Michael Chen',
+    name: 'Jayanth Midde',
     role: 'Backend Developer',
     avatar: 'MC',
     tasks: [
@@ -40,7 +40,52 @@ const teamMembers = [
   },
   {
     id: 4,
-    name: 'Emily Rodriguez',
+    name: 'Aman kumar Singh Rajput',
+    role: 'Project Manager',
+    avatar: 'ER',
+    tasks: [
+      { id: 9, title: 'Stakeholder meeting', status: 'completed', dueDate: '2025-05-05' },
+      { id: 10, title: 'Sprint planning', status: 'in-progress', dueDate: '2025-05-11' },
+      { id: 11, title: 'Resource allocation', status: 'pending', dueDate: '2025-05-17' }
+    ]
+  },
+ 
+  {
+    id: 5,
+    name: 'Navya ',
+    role: 'Project Manager',
+    avatar: 'ER',
+    tasks: [
+      { id: 15, title: 'Stakeholder meeting', status: 'completed', dueDate: '2025-05-05' },
+      { id: 16, title: 'Sprint planning', status: 'in-progress', dueDate: '2025-05-11' },
+      { id: 17, title: 'Resource allocation', status: 'pending', dueDate: '2025-05-17' }
+    ]
+  },
+  {
+    id: 6,
+    name: 'Varsha',
+    role: 'Project Manager',
+    avatar: 'ER',
+    tasks: [
+      { id: 18, title: 'Stakeholder meeting', status: 'completed', dueDate: '2025-05-05' },
+      { id: 19, title: 'Sprint planning', status: 'in-progress', dueDate: '2025-05-11' },
+      { id: 20, title: 'Resource allocation', status: 'pending', dueDate: '2025-05-17' }
+    ]
+  },
+  {
+    id: 7,
+    name: 'Dhruva K R',
+    role: 'Project Manager',
+    avatar: 'ER',
+    tasks: [
+      { id: 9, title: 'Stakeholder meeting', status: 'completed', dueDate: '2025-05-05' },
+      { id: 10, title: 'Sprint planning', status: 'in-progress', dueDate: '2025-05-11' },
+      { id: 11, title: 'Resource allocation', status: 'pending', dueDate: '2025-05-17' }
+    ]
+  },
+  {
+    id: 8,
+    name: 'Musaddik',
     role: 'Project Manager',
     avatar: 'ER',
     tasks: [
@@ -189,7 +234,7 @@ const Workflow = () => {
             <CardContent className="flex items-center justify-between p-6">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Team Members</p>
-                <p className="text-3xl font-bold text-foreground mt-1">4</p>
+                <p className="text-3xl font-bold text-foreground mt-1">8</p>
               </div>
               <div className="h-12 w-12 bg-tritonexus-pink/10 rounded-full flex items-center justify-center">
                 <span className="text-xl text-tritonexus-pink font-bold">M</span>
