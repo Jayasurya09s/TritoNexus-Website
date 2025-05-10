@@ -3,7 +3,7 @@ import React from 'react';
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24 bg-hero-pattern">
+    <section className="relative overflow-hidden pt-222 pb-16 md:pt-40 md:pb-24 bg-hero-pattern">
       {/* Gradient Orb Decorations */}
       <div className="absolute top-20 left-1/4 w-72 h-72 bg-tritonexus-purple/20 rounded-full blur-[100px] animate-float" />
       <div className="absolute bottom-20 right-1/4 w-64 h-64 bg-tritonexus-pink/20 rounded-full blur-[100px] animate-float" style={{ animationDelay: '1s' }} />
@@ -27,7 +27,7 @@ const HeroSection = () => {
           </div>
           
           {/* Hero Image */}
-          <div className="mt-16 relative animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+          {/* <div className="mt-16 relative animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent z-10 h-20 bottom-0"></div>
             <div className="bg-gradient-to-r from-tritonexus-purple/5 to-tritonexus-pink/5 rounded-xl border border-muted p-2 shadow-xl">
               <div className="rounded-lg overflow-hidden border border-muted/80">
@@ -59,7 +59,7 @@ const HeroSection = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

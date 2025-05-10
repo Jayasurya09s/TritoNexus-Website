@@ -9,7 +9,7 @@ interface FeatureProps {
 
 const Feature: React.FC<FeatureProps> = ({ title, description, icon }) => {
   return (
-    <div className="feature-card">
+    <div className="feature-card z-20">
       <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-tritonexus-purple/20 to-tritonexus-pink/20">
         {icon}
       </div>

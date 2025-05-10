@@ -146,7 +146,7 @@ const ChartSection = () => {
             </div>
           )}
         </div>
-
+{/* 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
           <div className="feature-card flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-full bg-tritonexus-purple/20 flex items-center justify-center mb-4">
@@ -188,7 +188,7 @@ const ChartSection = () => {
             <h3 className="font-semibold text-xl mb-1">95%</h3>
             <p className="text-muted-foreground text-sm">Customer Satisfaction</p>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

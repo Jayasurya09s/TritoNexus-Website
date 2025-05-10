@@ -21,7 +21,7 @@ const Index = () => {
         <ChartSection />
         
         {/* Testimonial/CTA Section */}
-        <section id="testimonials" className="section bg-gradient-to-b from-muted/30 to-background">
+        {/* <section id="testimonials" className="section bg-gradient-to-b from-muted/30 to-background">
           <div className="container-custom">
             <div className="text-center max-w-3xl mx-auto mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -104,7 +104,7 @@ const Index = () => {
               </form>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
       <Footer />
     </div>
