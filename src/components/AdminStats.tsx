@@ -12,7 +12,7 @@ const AdminStats = () => {
       value: 128,
       percentage: 70,
       icon: Check,
-      color: "from-green-500 to-emerald-700",
+      // color: "from-green-500 to-emerald-700",
       textColor: "text-green-500"
     },
     {
@@ -20,7 +20,7 @@ const AdminStats = () => {
       value: 45,
       percentage: 35,
       icon: Loader2,
-      color: "from-blue-500 to-indigo-600",
+      // color: "from-blue-500 to-indigo-600",
       textColor: "text-blue-500"
     },
     {
@@ -28,7 +28,7 @@ const AdminStats = () => {
       value: 8,
       percentage: 15,
       icon: AlertTriangle,
-      color: "from-red-500 to-rose-600",
+      // color: "from-red-500 to-rose-600",
       textColor: "text-red-500"
     },
     {
@@ -36,7 +36,7 @@ const AdminStats = () => {
       value: "85%",
       percentage: 85,
       icon: Activity,
-      color: "from-tritonexus-purple to-tritonexus-pink",
+      // color: "from-tritonexus-purple to-tritonexus-pink",
       textColor: "text-tritonexus-purple"
     }
   ];

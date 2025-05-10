@@ -26,8 +26,8 @@ const TeamTaskPanel = () => {
   const teamMembers: TeamMember[] = [
     {
       id: 1,
-      name: "Alice Johnson",
-      role: "UI Designer",
+      name: "Anshuman pati",
+      role: "Hardware Lead",
       avatar: "",
       initials: "AJ",
       tasksAssigned: 12,
@@ -36,18 +36,28 @@ const TeamTaskPanel = () => {
     },
     {
       id: 2,
-      name: "Bob Smith",
-      role: "Frontend Developer",
+      name: "Aman Kumar Singh",
+      role: "Software Member",
       avatar: "",
       initials: "BS",
       tasksAssigned: 15,
       tasksCompleted: 7,
       progress: 46
     },
-    {
+      {
       id: 3,
-      name: "Carlos Rodriguez",
-      role: "Backend Developer",
+      name: "Darshil Nathwani",
+      role: "Software Lead",
+      avatar: "",
+      initials: "FC",
+      tasksAssigned: 9,
+      tasksCompleted: 4,
+      progress: 44
+    },
+    {
+      id: 4,
+      name: "Dhruva K.R",
+      role: "Hardware Member",
       avatar: "",
       initials: "CR",
       tasksAssigned: 10,
@@ -55,9 +65,9 @@ const TeamTaskPanel = () => {
       progress: 90
     },
     {
-      id: 4,
-      name: "Diana Lee",
-      role: "Project Manager",
+      id: 5,
+      name: "Jayanth Midde",
+      role: "Designing Engineer",
       avatar: "",
       initials: "DL",
       tasksAssigned: 8,
@@ -65,9 +75,9 @@ const TeamTaskPanel = () => {
       progress: 63
     },
     {
-      id: 5,
-      name: "Ethan Wright",
-      role: "QA Engineer",
+      id: 6,
+      name: "Musaddik",
+      role: "Software Member",
       avatar: "",
       initials: "EW",
       tasksAssigned: 14,
@@ -75,9 +85,19 @@ const TeamTaskPanel = () => {
       progress: 71
     },
     {
-      id: 6,
-      name: "Fiona Chen",
-      role: "DevOps Engineer",
+      id: 7,
+      name: "Navya K.M",
+      role: "Hardware Member",
+      avatar: "",
+      initials: "FC",
+      tasksAssigned: 9,
+      tasksCompleted: 4,
+      progress: 44
+    },
+    {
+      id: 8,
+      name: "Varsha Nazare",
+      role: "Software Member",
       avatar: "",
       initials: "FC",
       tasksAssigned: 9,
