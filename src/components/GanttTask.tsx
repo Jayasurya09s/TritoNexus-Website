@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/components/ui/use-toast';
 
 interface TaskProps {
   task: {
@@ -22,6 +22,7 @@ interface TaskProps {
 const GanttTask: React.FC<TaskProps> = ({ task, onUpdate, onEdit, onDelete }) => {
   const [progress, setProgress] = useState(task.progress);
   const [isEditingProgress, setIsEditingProgress] = useState(false);
+  const { toast } = useToast();
 
   // Format dates for display
   const formatDate = (date: Date) => {
@@ -36,6 +37,11 @@ const GanttTask: React.FC<TaskProps> = ({ task, onUpdate, onEdit, onDelete }) =>
     const updatedTask = { ...task, progress };
     onUpdate(updatedTask);
     setIsEditingProgress(false);
+    toast({
+      title: "Progress Updated",
+      description: `Task "${task.name}" progress has been updated to ${progress}%`,
+      className: "bg-green-500/10 border-green-500/20 text-green-500",
+    });
   };
 
   // Calculate status color
@@ -86,7 +92,7 @@ const GanttTask: React.FC<TaskProps> = ({ task, onUpdate, onEdit, onDelete }) =>
             <div className="relative">
               <Progress 
                 value={progress} 
-                className="h-3 bg-muted" 
+                className="h-3 bg-muted cursor-pointer" 
                 onClick={() => setIsEditingProgress(true)}
               />
               <div 
