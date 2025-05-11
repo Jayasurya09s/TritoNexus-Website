@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,9 +22,23 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNavigation = (section: string) => {
+    if (location.pathname !== '/') {
+      // If we're not on the landing page, navigate to it first
+      navigate('/', { state: { scrollTo: section } });
+    } else {
+      // If we're already on the landing page, just scroll to the section
+      const element = document.getElementById(section);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    setIsMobileMenuOpen(false);
+  };
+
   const navLinks = [
-    { name: 'Features', href: '#features' },
-    { name: 'Analytics', href: '#analytics' },
+    { name: 'Features', section: 'features' },
+    { name: 'Analytics', section: 'analytics' },
     // { name: 'Testimonials', href: '#testimonials' },
   ];
 
@@ -43,13 +59,13 @@ const Navbar = () => {
         <nav className="hidden md:flex items-center space-x-8">
           <div className="flex space-x-6">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.name}
-                href={link.href}
+                onClick={() => handleNavigation(link.section)}
                 className="text-foreground/80 hover:text-foreground transition-colors font-medium"
               >
                 {link.name}
-              </a>
+              </button>
             ))}
           </div>
           
@@ -104,14 +120,13 @@ const Navbar = () => {
         <div className="md:hidden bg-background/95 backdrop-blur-md mt-3 px-4 py-5 rounded-lg shadow-lg">
           <nav className="flex flex-col space-y-4">
             {navLinks.map((link) => (
-              <a
+              <button
                 key={link.name}
-                href={link.href}
-                className="text-foreground/80 hover:text-foreground py-2 transition-colors font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => handleNavigation(link.section)}
+                className="text-foreground/80 hover:text-foreground py-2 transition-colors font-medium text-left"
               >
                 {link.name}
-              </a>
+              </button>
             ))}
             <Link
               to="/workflow"

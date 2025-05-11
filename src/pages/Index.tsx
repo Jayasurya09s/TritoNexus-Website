@@ -1,5 +1,5 @@
-
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import FeatureSection from '../components/FeatureSection';
@@ -7,10 +7,30 @@ import ChartSection from '../components/ChartSection';
 import Footer from '../components/Footer';
 
 const Index = () => {
+  const location = useLocation();
+
   // Set page title on mount
   useEffect(() => {
     document.title = "TritoNexus - Streamline Your Workflow";
   }, []);
+
+  // Handle scrolling to sections when navigating from other pages
+  useEffect(() => {
+    const scrollToSection = () => {
+      const state = location.state as { scrollTo?: string };
+      if (state?.scrollTo) {
+        const element = document.getElementById(state.scrollTo);
+        if (element) {
+          // Add a small delay to ensure the page has loaded
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      }
+    };
+
+    scrollToSection();
+  }, [location]);
 
   return (
     <div className="min-h-screen flex flex-col">
