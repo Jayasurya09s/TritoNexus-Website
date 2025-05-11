@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Linkedin, Github, Mail } from 'lucide-react';
@@ -111,7 +111,7 @@ const AboutUs = () => {
                 </span>
                 Our Story
               </h2>
-              <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5">
+              <Card>
                 <CardContent className="p-8">
                   <div className="space-y-6">
                     <p className="text-muted-foreground">
@@ -129,7 +129,7 @@ const AboutUs = () => {
             </div>
 
             {/* Team Members Grid */}
-            <div className="mb-16">
+            <div>
               <h2 className="text-2xl font-bold mb-6 flex items-center">
                 <span className="bg-tritonexus-purple/20 text-tritonexus-purple w-8 h-8 rounded-full inline-flex items-center justify-center mr-2">
                   <span className="text-sm">T</span>
@@ -158,26 +158,13 @@ const AboutUs = () => {
                     <CardContent>
                       <p className="text-sm text-muted-foreground mb-4">{member.bio}</p>
                       <div className="flex space-x-3">
-                        <a 
-                          href={member.linkedin} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-tritonexus-purple hover:text-tritonexus-pink transition-colors"
-                        >
+                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-tritonexus-purple transition-colors">
                           <Linkedin className="h-5 w-5" />
                         </a>
-                        <a 
-                          href={member.github} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-tritonexus-purple hover:text-tritonexus-pink transition-colors"
-                        >
+                        <a href={member.github} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-tritonexus-purple transition-colors">
                           <Github className="h-5 w-5" />
                         </a>
-                        <a 
-                          href={`mailto:${member.email}`}
-                          className="text-tritonexus-purple hover:text-tritonexus-pink transition-colors"
-                        >
+                        <a href={`mailto:${member.email}`} className="text-muted-foreground hover:text-tritonexus-purple transition-colors">
                           <Mail className="h-5 w-5" />
                         </a>
                       </div>
@@ -186,8 +173,9 @@ const AboutUs = () => {
                 ))}
               </div>
             </div>
+            <br />
+          
 
-            {/* Mission & Vision */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5">
                 <CardHeader>

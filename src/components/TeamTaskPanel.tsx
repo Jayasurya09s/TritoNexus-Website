@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { UserPlus, Pen, Trash, Check } from 'lucide-react';
+import { UserPlus, Pen, Trash  } from 'lucide-react';
 import AssignTaskDialog from './AssignTaskDialog';
 import EditTaskDialog from './EditTaskDialog';
 import { useToast } from "@/components/ui/use-toast";

@@ -34,7 +34,7 @@ const Terms = () => {
         </p>
 
         {/* Content blocks */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Introduction */}
           <TermsSection title="Introduction">
             <p>By using TritoNexus, you agree to these terms and conditions.</p>
@@ -80,7 +80,7 @@ const Terms = () => {
           {/* Contact */}
           <TermsSection title="Contact">
             <p>For questions about these terms, contact us at:</p>
-            <p className="text-pink-300">support@tritonexus.tech</p>
+            <p className="text-purple-300">legal@tritonexus.tech</p>
           </TermsSection>
         </div>
 

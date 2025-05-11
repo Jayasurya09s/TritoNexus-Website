@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, ResponsiveContainer } from "recharts";
@@ -34,25 +34,6 @@ const COLORS = ["#9b87f5", "#D946EF", "#7E69AB", "#D6BCFA", "#FFDEE2"];
 
 const ChartSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState("bar");
-  const [chartWidth, setChartWidth] = useState(500);
-
-  // Update chart width on window resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setChartWidth(300);
-      } else {
-        setChartWidth(500);
-      }
-    };
-    
-    handleResize(); // Set initial width
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   return (
     <section id="analytics" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/40">
@@ -123,7 +104,7 @@ const ChartSection: React.FC = () => {
                         dataKey="value"
                         label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                       >
-                        {pieChartData.map((entry, index) => (
+                        {pieChartData.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

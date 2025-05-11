@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../components/Logo';
@@ -20,7 +19,7 @@ const Login = () => {
       </div>
       
       <div className="w-full max-w-md">
-        <Card className="border border-border shadow-lg bg-background/70 backdrop-blur-sm">
+        <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
             <CardDescription className="text-center">
@@ -57,15 +56,13 @@ const Login = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button className="w-full bg-gradient-to-r from-tritonexus-purple to-tritonexus-pink hover:opacity-90 transition-opacity">
-              Sign In
-            </Button>
-            <div className="text-center text-sm">
+            <Button className="w-full">Sign In</Button>
+            <p className="text-sm text-center text-muted-foreground">
               Don't have an account?{' '}
-              <a href="#" className="text-tritonexus-purple hover:underline">
+              <Link to="/signup" className="text-tritonexus-purple hover:underline">
                 Sign up
-              </a>
-            </div>
+              </Link>
+            </p>
           </CardFooter>
         </Card>
       </div>
