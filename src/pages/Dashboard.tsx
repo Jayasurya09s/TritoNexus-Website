@@ -1,11 +1,20 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import TaskCard from '../components/TaskCard';
 import NotesSection from '../components/NotesSection';
 import ChatBot from '../components/ChatBot';
 import QuerySection from '../components/QuerySection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Mock user data
+const userProfile = {
+  name: "John Doe",
+  role: "Software Developer",
+  avatar: "/path-to-avatar.jpg",
+  email: "john.doe@example.com"
+};
 
 // Mock data for assigned tasks
 const assignedTasks = [
@@ -48,13 +57,47 @@ const assignedTasks = [
 ];
 
 const Dashboard = () => {
+  const [tasks, setTasks] = useState(assignedTasks);
+  
   // Calculate task statistics
-  const completedTasks = assignedTasks.filter(task => task.status === 'completed').length;
-  const inProgressTasks = assignedTasks.filter(task => task.status === 'in progress').length;
-  const pendingTasks = assignedTasks.filter(task => task.status === 'pending').length;
+  const completedTasks = tasks.filter(task => task.status === 'completed').length;
+  const inProgressTasks = tasks.filter(task => task.status === 'in progress').length;
+  const pendingTasks = tasks.filter(task => task.status === 'pending').length;
+
+  const handleStatusChange = (taskId: number, newStatus: string) => {
+    setTasks(tasks.map(task => {
+      if (task.id === taskId) {
+        // If task is being marked as completed, set progress to 100%
+        if (newStatus === 'completed') {
+          return { ...task, status: newStatus, progress: 100 };
+        }
+        return { ...task, status: newStatus };
+      }
+      return task;
+    }));
+  };
   
   return (
     <DashboardLayout title="Personal Dashboard">
+      {/* Profile Section */}
+      <Card className="mb-6">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-4">
+            <Avatar className="h-16 w-16">
+              <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
+              <AvatarFallback className="bg-gradient-to-br from-tritonexus-purple to-tritonexus-pink text-white text-xl">
+                {userProfile.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h2 className="text-2xl font-bold">{userProfile.name}</h2>
+              <p className="text-muted-foreground">{userProfile.role}</p>
+              <p className="text-sm text-muted-foreground">{userProfile.email}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card className="bg-gradient-to-br from-tritonexus-purple/5 to-tritonexus-pink/5 border-tritonexus-purple/30">
@@ -62,7 +105,7 @@ const Dashboard = () => {
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-muted-foreground text-sm">Assigned Tasks</h3>
-                <p className="text-3xl font-bold">{assignedTasks.length}</p>
+                <p className="text-3xl font-bold">{tasks.length}</p>
               </div>
               <div className="h-12 w-12 rounded-full bg-gradient-to-br from-tritonexus-purple/20 to-tritonexus-pink/20 flex items-center justify-center">
                 <span className="text-xl text-tritonexus-purple">A</span>
@@ -114,11 +157,56 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {assignedTasks.map(task => (
-                  <TaskCard key={task.id} task={task} />
-                ))}
-              </div>
+              <Tabs defaultValue="pending" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="pending">Pending</TabsTrigger>
+                  <TabsTrigger value="in-progress">In Progress</TabsTrigger>
+                  <TabsTrigger value="completed">Completed</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="pending" className="mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {tasks
+                      .filter(task => task.status === 'pending')
+                      .map(task => (
+                        <TaskCard 
+                          key={task.id} 
+                          task={task} 
+                          onStatusChange={handleStatusChange}
+                        />
+                    ))}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="in-progress" className="mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {tasks
+                      .filter(task => task.status === 'in progress')
+                      .map(task => (
+                        <TaskCard 
+                          key={task.id} 
+                          task={task} 
+                          onStatusChange={handleStatusChange}
+                        />
+                    ))}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="completed" className="mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {tasks
+                      .filter(task => task.status === 'completed')
+                      .map(task => (
+                        <TaskCard 
+                          key={task.id} 
+                          task={task} 
+                          onStatusChange={handleStatusChange}
+                          isCompleted={true}
+                        />
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
           
@@ -130,16 +218,13 @@ const Dashboard = () => {
         
         {/* Right Column - Notes and Chatbot */}
         <div>
-        <div className="space-y-6">
-          <NotesSection />
-          
+          <div className="space-y-6">
+            <NotesSection />
+          </div>
+          <div>
+            <ChatBot/>
+          </div>
         </div>
-
-      <div>
-        <ChatBot/>
-      </div>
-        </div>
-
       </div>
     </DashboardLayout>
   );

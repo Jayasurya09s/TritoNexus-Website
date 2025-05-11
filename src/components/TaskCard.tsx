@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Clock, CheckCircle2, AlertCircle, MessageSquare } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface TaskProps {
   task: {
@@ -14,6 +14,8 @@ interface TaskProps {
     assignee: string;
     description?: string;
   };
+  onStatusChange?: (taskId: number, newStatus: string) => void;
+  isCompleted?: boolean;
 }
 
 const StatusTag = ({ status }: { status: string }) => {
@@ -43,15 +45,54 @@ const StatusTag = ({ status }: { status: string }) => {
   }
 };
 
-const TaskCard: React.FC<TaskProps> = ({ task }) => {
+const TaskCard: React.FC<TaskProps> = ({ task, onStatusChange, isCompleted }) => {
   const [expanded, setExpanded] = useState(false);
+
+  const handleStatusChange = (newStatus: string) => {
+    if (onStatusChange && !isCompleted) {
+      onStatusChange(task.id, newStatus);
+    }
+  };
 
   return (
     <Card className="border border-border shadow hover:shadow-md transition-all hover:border-tritonexus-purple/30 bg-background/80 backdrop-blur-sm">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-medium">{task.name}</CardTitle>
-          <StatusTag status={task.status} />
+          {isCompleted ? (
+            <StatusTag status={task.status} />
+          ) : (
+            <Select
+              value={task.status}
+              onValueChange={handleStatusChange}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue>
+                  <StatusTag status={task.status} />
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="completed">
+                  <div className="flex items-center text-green-500">
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                    <span>Completed</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="in progress">
+                  <div className="flex items-center text-tritonexus-purple">
+                    <Clock className="h-4 w-4 mr-2" />
+                    <span>In Progress</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="pending">
+                  <div className="flex items-center text-amber-500">
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    <span>Pending</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          )}
         </div>
         <p className="text-sm text-muted-foreground">Assignee: {task.assignee}</p>
       </CardHeader>
